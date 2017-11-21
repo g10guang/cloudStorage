@@ -1,0 +1,14 @@
+.idea/
+__pycache__
+env/
+__pycache__
+.idea/
+test/
+*.py[cod]
+
+blog_secret_key
+
+scripts/
+
+
+storage/

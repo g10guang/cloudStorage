@@ -17,3 +17,12 @@ class User(db.Model):
     dirs = db.relationship('Directory', back_populates='user', lazy='dynamic', cascade='save-update')
 
     files = db.relationship('File', back_populates='user', lazy='dynamic', cascade='save-update')
+
+    def is_active(self):
+        return True
+
+    def is_authenticated(self):
+        return True
+
+    def get_id(self):
+        return self.id

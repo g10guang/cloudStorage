@@ -4,6 +4,7 @@
 # 2017-11-18 12:10
 
 from app.config.default import DefaultConfig
+import os
 
 
 class DevelopConfig(DefaultConfig):
@@ -11,3 +12,6 @@ class DevelopConfig(DefaultConfig):
     开发配置
     """
     DEBUG = True
+
+    # 文件上传保存路径
+    UPLOAD_FOLDER = os.path.join(os.path.abspath(os.curdir), 'storage')

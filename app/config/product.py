@@ -11,3 +11,5 @@ class ProductConfig(DefaultConfig):
     产品配置
     """
     DEBUG = False
+
+    UPLOAD_FOLDER = '/oss'
