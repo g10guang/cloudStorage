@@ -48,6 +48,12 @@ class File(db.Model):
             db.session.commit()
         return True
 
+    def delete(self, commit=True):
+        """
+        删除文件对象
+        :return:
+        """
+
 
 
 from app.tools import logic_file_tool

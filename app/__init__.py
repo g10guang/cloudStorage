@@ -30,7 +30,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 
 # import views
-from app.apis import verify, download, upload, logic_operation, storage_operatrion
+from app.apis import verify, download, upload, logic_operation
 
 # import models
 from app.models import directory, file, storage_file, user

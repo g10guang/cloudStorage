@@ -19,7 +19,7 @@ def app_before_request():
     if request.method == 'GET':
         g.args = request.args
     elif request.method == 'POST':
-        g.args = request.json
+        g.json = request.json
 
 
 @app.after_request
