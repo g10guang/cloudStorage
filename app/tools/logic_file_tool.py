@@ -360,22 +360,26 @@ def move_file_dir_by_id(file_ids, dir_ids, parent_id, user_id, commit=True):
     1 ==> parent_id 不存在
     2 ==> parent_folder 不属于当前用户
     """
+    duplicate_names = []
+    if not parent_id:
+        # 移动到根目录
+        return move_file_dir_to_root(file_ids, dir_ids, user_id)
     parent_folder = Directory.query.get(parent_id)
     if not parent_folder:
-        return 1
+        return 1, duplicate_names
     if parent_folder.user_id != user_id:
-        return 2
+        return 2, duplicate_names
     names = get_names_in_dir(parent_folder)
     for did in dir_ids:
-        move_dir_by_id(did, parent_folder, user_id, names=names)
+        move_dir_by_id(did, parent_folder, user_id, names, duplicate_names)
     for fid in file_ids:
-        move_file_by_id(fid, parent_folder, user_id, names=names)
+        move_file_by_id(fid, parent_folder, user_id, names, duplicate_names)
     if commit:
-        return db.session.commit()
-    return 0
+        db.session.commit()
+    return 0, duplicate_names
 
 
-def move_dir_by_id(did, parent_obj, user_id, names:set):
+def move_dir_by_id(did, parent_obj, user_id, names:set, duplicate_names:list):
     """
     通过文件夹 id 移动单个文件夹
     :param names: parent_folder 名字集合，用于去重
@@ -394,12 +398,15 @@ def move_dir_by_id(did, parent_obj, user_id, names:set):
     if folder.user_id != user_id:
         return 2
     if folder.name in names:
-        names.add(folder.name)
-    folder.parent_id = parent_obj.id
+        duplicate_names.append({'name': folder.name, 'type': 1, 'id': did})
+        return 3
+    names.add(folder.name)
+    parent_id = parent_obj.id if parent_obj else None
+    folder.parent_id = parent_id
     return 0
 
 
-def move_file_by_id(fid, parent_obj, user_id, names: set):
+def move_file_by_id(fid, parent_obj, user_id, names: set, duplicate_names:list):
     """
     通过文件 id 移动单个文件
     :param names: parent_folder 下的文件集合，可以用于判断是否出现重复
@@ -419,25 +426,12 @@ def move_file_by_id(fid, parent_obj, user_id, names: set):
         return 2
     # 判断是否出现重名情况
     if file.name in names:
-        names.add(file.name)
-    file.parent_id = parent_obj.id
+        duplicate_names.append({'name': file.name, 'type': 0, 'id': fid})
+        return 3
+    names.add(file.name)
+    parent_id = parent_obj.id if parent_obj else None
+    file.parent_id = parent_id
     return 0
-
-
-def check_is_duplicate_name_in_parent_by_obj(name, parent_obj):
-    """
-    判断父文件夹下是否出现重名
-    :param name:
-    :param parent_obj: 文件夹对象 Directory object
-    :return:
-    """
-    for subdir in parent_obj.dirs:
-        if subdir.name == name:
-            return True
-    for subfile in parent_obj.files:
-        if subfile.name == name:
-            return True
-    return False
 
 
 def get_names_in_dir(parent_dir, names=set()):
@@ -448,7 +442,36 @@ def get_names_in_dir(parent_dir, names=set()):
     :return: set() of names of files and dirs
     """
     for subdir in parent_dir.dirs:
-        names.add(subdir.name)
+        if subdir.is_del == 0:
+            names.add(subdir.name)
     for subfile in parent_dir.files:
-        names.add(subfile.name)
+        if subfile.name == 0:
+            names.add(subfile.name)
     return names
+
+
+def move_file_dir_to_root(file_ids, dir_ids, user_id, commit=True):
+    """
+    将文件和文件夹移动到该用户的根目录下
+    :param file_ids:
+    :param dir_ids:
+    :param user_id:
+    :param commit:
+    :return:
+    0 ==> 成功移动
+    """
+    filelist = File.query.filter(File.parent_id.is_(None)).filter(File.user_id == user_id).filter(File.is_del == 0)
+    dirlist = Directory.query.filter(Directory.parent_id.is_(None)).filter(Directory.user_id == user_id).filter(Directory.is_del == 0)
+    names = set()
+    duplicate_names = []
+    for item in filelist:
+        names.add(item.name)
+    for item in dirlist:
+        names.add(item.name)
+    for did in dir_ids:
+        move_dir_by_id(did, None, user_id, names, duplicate_names)
+    for fid in file_ids:
+        move_file_by_id(fid, None, user_id, names, duplicate_names)
+    if commit:
+        db.session.commit()
+    return 0, duplicate_names

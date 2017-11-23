@@ -147,9 +147,11 @@ def move():
     # 需要被移动的文件和文件夹
     items = g.json['files']
     # 移动到的目标文件夹
-    parent_id = g.json.get('targetParentId')
+    parent_id = g.json.get('targetID')
     if not isinstance(parent_id, int):
         return jsonify({'status': 2}), 400
     dirs, files = split_data.split_file_dir(items)
-    logic_file_tool.move_file_dir_by_id(files, dirs, parent_id, user_id=g.user.id)
-    return jsonify({'status': 1})
+    status_code, duplicate_names = logic_file_tool.move_file_dir_by_id(files, dirs, parent_id, user_id=g.user.id)
+    if status_code == 0:
+        return jsonify({'status': 1, 'duplicateFiles': duplicate_names})
+    return jsonify({'status': 2})
