@@ -41,20 +41,20 @@ def check_is_duplicate_name_and_generate_new_name(user_id, parent_id, name):
             # 父文件夹不是 current_user 所拥有
             return 1, None
         for subdir in parent.dirs:
-            if regex_match_index_into_set(re_statement, subdir.name, indexes_used) == 1:
+            if subdir.is_del == 0 and regex_match_index_into_set(re_statement, subdir.name, indexes_used) == 1:
                 is_duplicate_name = True
         for subfile in parent.files:
-            if regex_match_index_into_set(re_statement, subfile.name, indexes_used) == 1:
+            if subfile.is_del == 0 and regex_match_index_into_set(re_statement, subfile.name, indexes_used) == 1:
                 is_duplicate_name = True
     else:
         # 是根目录，查找该用户根目录下的所有文件和文件夹
         dirs_in_root = Directory.query.filter(Directory.user_id == user_id).filter(Directory.parent_id.is_(None))
         for subdir in dirs_in_root:
-            if regex_match_index_into_set(re_statement, subdir.name, indexes_used) == 1:
+            if subdir.is_del == 0 and regex_match_index_into_set(re_statement, subdir.name, indexes_used) == 1:
                 is_duplicate_name = True
         files_in_root = File.query.filter(File.user_id == user_id).filter(File.parent_id.is_(None))
         for subfile in files_in_root:
-            if regex_match_index_into_set(re_statement, subfile.name, indexes_used) == 1:
+            if subfile.is_del == 0 and regex_match_index_into_set(re_statement, subfile.name, indexes_used) == 1:
                 is_duplicate_name = True
     if not is_duplicate_name:
         # 文件夹下没有重名
@@ -126,20 +126,20 @@ def check_is_duplicate(user_id, parent_id, name):
             # 父文件夹不是 current_user 所拥有
             return 1
         for subdir in parent.dirs:
-            if subdir.name == name:
+            if subdir.is_del == 0 and subdir.name == name:
                 return 2
         for subfile in parent.files:
-            if subfile.name == name:
+            if subfile.is_del == 0 and subfile.name == name:
                 return 2
     else:
         # 是根目录，查找该用户根目录下的所有文件和文件夹
         dirs_in_root = Directory.query.filter(Directory.user_id == user_id).filter(Directory.parent_id.is_(None))
         for subdir in dirs_in_root:
-            if subdir.name == name:
+            if subdir.is_del == 0 and subdir.name == name:
                 return 2
         files_in_root = File.query.filter(File.user_id == user_id).filter(File.parent_id.is_(None))
         for subfile in files_in_root:
-            if subfile.name == name:
+            if subfile.is_del == 0 and subfile.name == name:
                 return 2
     return 0
 

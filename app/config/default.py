@@ -17,6 +17,8 @@ class DefaultConfig:
 
     MYSQL_PORT = os.environ.get('MYSQL_PORT')
 
+    OSS_MODE = os.environ.get('OSS_MODE', 'DEVELOP')
+
     SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}:{}/oss?charset=utf8'.format(
         MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT)
 

@@ -34,3 +34,9 @@ from app.apis import verify, download, upload, logic_operation
 
 # import models
 from app.models import directory, file, storage_file, user
+
+
+# 配置 raven
+if app.config['OSS_MODE'] == 'PRODUCT':
+    from raven.contrib.flask import Sentry
+    sentry = Sentry(app)
