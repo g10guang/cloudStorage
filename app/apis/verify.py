@@ -24,6 +24,9 @@ def jwt_verify():
     except jwt.ExpiredSignatureError:
         # JWT 过期
         return jsonify({'status': 0})
+    except jwt.DecodeError:
+        # 秘钥不正确
+        return jsonify({'status': 3})
     uid = msg['uid']
     user = User.query.filter_by(uid=uid).first()
     if user:
