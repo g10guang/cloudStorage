@@ -3,7 +3,6 @@
 # author: Xiguang Liu<g10guang@foxmail.com>
 # 2017-11-22 10:04
 # 拼接数据，用于前后端交互
-import uuid
 # 添加使用 uid 原因：前后端接口不对，前段需要通过唯一 id 来区分选择，后台将文件和文件夹分开，无法为前端生成唯一的 id，所以这里为每一个 item 添加一个 uuid 属性
 
 
@@ -15,7 +14,8 @@ def format_directory(directory):
     """
     if directory:
         # type == 1 为文件夹
-        data = {'id': directory.id, 'name': directory.name, 'modifiedTime': directory.modifiedTime.strftime('%Y-%m-%d'), 'type': 1, 'size': 0, 'uid': uuid.uuid4().hex}
+        # data = {'id': directory.id, 'name': directory.name, 'modifiedTime': directory.modifiedTime.strftime('%Y-%m-%d'), 'type': 1, 'size': 0, 'uid': uuid.uuid4().hex}
+        data = {'id': directory.id, 'name': directory.name, 'modifiedTime': directory.modifiedTime.strftime('%Y-%m-%d'), 'type': 1, 'size': 0}
         return data
 
 
@@ -39,7 +39,8 @@ def format_file(file):
     """
     if file:
         # type == 0　为文件
-        data = {'id': file.id, 'name': file.name, 'modifiedTime': file.modifiedTime.strftime('%Y-%m-%d'), 'size': file.size, 'type': 0, 'uid': uuid.uuid4().hex}
+        # data = {'id': file.id, 'name': file.name, 'modifiedTime': file.modifiedTime.strftime('%Y-%m-%d'), 'size': file.size, 'type': 0, 'uid': uuid.uuid4().hex}
+        data = {'id': file.id, 'name': file.name, 'modifiedTime': file.modifiedTime.strftime('%Y-%m-%d'), 'size': file.size, 'type': 0}
         return data
 
 
