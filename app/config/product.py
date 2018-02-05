@@ -4,6 +4,7 @@
 # 2017-11-18 12:10
 
 from app.config.default import DefaultConfig
+import os
 
 
 class ProductConfig(DefaultConfig):
@@ -12,4 +13,4 @@ class ProductConfig(DefaultConfig):
     """
     DEBUG = False
 
-    UPLOAD_FOLDER = '/oss'
+    UPLOAD_FOLDER = os.path.join(os.path.abspath(os.curdir), 'storage')

@@ -15,3 +15,6 @@ class DevelopConfig(DefaultConfig):
 
     # 文件上传保存路径
     UPLOAD_FOLDER = os.path.join(os.path.abspath(os.curdir), 'storage')
+
+    # 用于显示　sql 语句
+    SQLALCHEMY_ECHO = True

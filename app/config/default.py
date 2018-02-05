@@ -15,10 +15,11 @@ class DefaultConfig:
 
     MYSQL_HOST = os.environ.get('MYSQL_HOST')
 
-    MYSQL_PORT = os.environ.get('MYSQL_PORT')
+    MYSQL_PORT = os.environ.get('MYSQL_PORT', 3306)
 
     OSS_MODE = os.environ.get('OSS_MODE', 'DEVELOP')
 
+    # 这里需要声明使用 utf-8 字符集
     SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@{}:{}/oss?charset=utf8'.format(
         MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT)
 

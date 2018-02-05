@@ -25,7 +25,7 @@ def add_folder():
     :return:
     """
     parent_id = g.args.get('parentFolderId', None, type=int)
-    name = g.args.get('name')
+    name = g.args['name']
     new_dir = Directory(name=name, parent_id=parent_id if parent_id else None, user_id=g.user.id)
     if new_dir.save():
         return jsonify({'status': 1, 'folderInfo': format_data.format_directory(new_dir)})
